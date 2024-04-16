@@ -50,14 +50,13 @@ sol  = A\tn; % sol =  b_1,b_2, c_2,b_3,c_3
 grado = 2;
 coefficienti = zeros(length(h), grado+1);
 
-coefficienti(1,:) = [ sol(1), 0, a(1)]; %c_1 ==0
-coefficienti(2,:) = [sol(2), sol(3), a(2)];
-coefficienti(3,:) = [sol(4), sol(5),a(3)];
-
+coefficienti(1,:) = [  0, sol(1),a(1)]; %c_1 ==0
+coefficienti(2,:) = [ sol(3), sol(2), a(2)];
+coefficienti(3,:) = [ sol(5),sol(4),a(3)];
 
 % Creiamo una struttura di tipo "polinomio a tratti"
 % pp = mkpp(breaks,coefs)
-coefficienti
+
 pp = mkpp(dati, coefficienti);
 
 %valutiamo il polinomio creato:
