@@ -22,7 +22,7 @@ zoom(10)
 title('Original Image, 10x Zoom') %facendo lo zoom si nota che abbiamo perso dei pixel. Per risolvere si può, esempio, usare l'interpolazione
 F = griddedInterpolant(double(A)); %griglia dei pixel (i canali RGB vanno convertiti in double)
 [sx,sy,sz] = size(A);
-xq = (1:0.1:sx)';      %' sta per traposto
+xq = (1:0.1:sx)';      % questa istruzione crea un vettore di valori da 1 a sx con passo 0.1
 yq = (1:0.1:sy)';
 zq = (1:sz)';        
 

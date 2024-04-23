@@ -16,7 +16,6 @@ function yy=spline_quadratica(x,y,xx)
     end
     matrix(1,3)=0;
     %inserisco nella matrice i termini noti delle condizioni di continuità della derivata prima
-    %b2-b3+2*h2*c2=0
     j=1;
     for i=n:n+1
         matrix(i,j)=1;
