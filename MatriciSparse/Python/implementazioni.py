@@ -100,6 +100,6 @@ x0=np.random.rand(3)
 print("Jacobi",Jacobi(A,b,x0))
 print("SORForward",SORForward(A,b,x0))
 print("SORBackward",SORBackward(A,b,x0))
-print("SORSymmetric"SORSymmetric(A,b,x0))
+print("SORSymmetric",SORSymmetric(A,b,x0))
 
 print("\n\n",spla.spsolve(A,b))
