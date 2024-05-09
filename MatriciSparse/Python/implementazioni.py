@@ -4,15 +4,22 @@ import scipy.sparse as sparse
 import scipy.sparse.linalg as spla
 
 
-def Jacobi(A,b,x0,tol=1e-10,max_iter=1000):
-    M=sparse.diags(A.diagonal())
-    N=(sparse.tril(A,-1)+sparse.triu(A,1))
+def split(A):
+    D=sparse.dia_matrix((A.diagonal(),[0]),shape=(A.shape[0],A.shape[1])).tocsr()
+    E=sparse.tril(A,k=-1)
+    F=sparse.triu(A,k=1)
+    return D,E,F
+
+
+def Jacobi(A:sparse._matrix,b,x0,tol=1e-15,max_iter=5000):
+    D,E,F=split(A)
+    M=D
+    N=-(E+F)
     it=0
     stop=False
-    x0=sparse.csr_matrix(x0)
     while it<max_iter and not stop:
         x1=spla.spsolve(M,N@x0+b)
-        if spla.norm(x1-x0)<tol:
+        if np.linalg.norm(x1-x0)<tol:
             stop=True
             break
         x0=x1
@@ -24,14 +31,77 @@ def Jacobi(A,b,x0,tol=1e-10,max_iter=1000):
         return None
     
 
+def SORForward(A:sparse._matrix,b,x0,tol=1e-15,max_iter=5000,omega=1.0):
+    D,E,F=split(A)
+    M=D-omega*E
+    N=-(omega*F+(1-omega)*D)
+    print(M,N)
+    b=omega*b
+    it=0
+    stop=False
+    while it<max_iter and not stop:
+        x1=spla.spsolve(M,N @ x0 + b)
+        if np.linalg.norm(x1-x0)<tol:
+            stop=True
+            break
+        x0=x1
+        it+=1
+    if stop:
+        return x1
+    else:
+        print('Il metodo non converge')
+        return None
+
+
+def SORBackward(A:sparse._matrix,b,x0,tol=1e-15,max_iter=5000):
+    D,E,F=split(A)
+    M=D-F
+    N=-E
+    print(M,N)
+    it=0
+    stop=False
+    while it<max_iter and not stop:
+        x1=spla.spsolve(M,N@x0+b)
+        if np.linalg.norm(x1-x0)<tol:
+            stop=True
+            break
+        x0=x1
+        it+=1
+    if stop:
+        return x1
+    else:
+        print('Il metodo non converge')
+        return None
+
+def SORSimmetric(A:sparse._matrix,b,x0,tol=1e-15,max_iter=5000,omega=1.0):
+    D,E,F=split(A)
+    M=D-omega*E
+    N=-(omega*F+(1-omega)*D)
+    b=omega*b
+    it=0
+    stop=False
+    while it<max_iter and not stop:
+        x1=spla.spsolve(M,N @ x0 + b)
+        x2=spla.spsolve(M,N @ x1 + b)
+        if np.linalg.norm(x1-x0)<tol:
+            stop=True
+            break
+        x0=x2
+        it+=1
+    if stop:
+        return x1
+    else:
+        print('Il metodo non converge')
+        return None
     
 
 
-#create a 5x5 sparse matrix
-A=sparse.csr_matrix(np.random.rand(5,5))
-b=np.array([1,2,3,4,5])
-x0=np.array([0,0,0,0,0])
+A=sparse.csr_matrix(np.array([[4,0,0],[0,4,0],[0,0,4]]))
+b=np.array([1,2,3])
+x0=np.random.rand(3)
 print(Jacobi(A,b,x0))
+print(SORForward(A,b,x0))
+print(SORBackward(A,b,x0))
+print(SORSimmetric(A,b,x0))
 
-
-print("\n\n",np.linalg.solve(A,b))
+print("\n\n",spla.spsolve(A,b))
