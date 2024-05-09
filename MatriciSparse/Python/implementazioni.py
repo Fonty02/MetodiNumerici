@@ -35,7 +35,6 @@ def SORForward(A:sparse._matrix,b,x0,tol=1e-15,max_iter=5000,omega=1.0):
     D,E,F=split(A)
     M=D-omega*E
     N=-(omega*F+(1-omega)*D)
-    print(M,N)
     b=omega*b
     it=0
     stop=False
@@ -57,7 +56,6 @@ def SORBackward(A:sparse._matrix,b,x0,tol=1e-15,max_iter=5000):
     D,E,F=split(A)
     M=D-F
     N=-E
-    print(M,N)
     it=0
     stop=False
     while it<max_iter and not stop:
@@ -73,7 +71,7 @@ def SORBackward(A:sparse._matrix,b,x0,tol=1e-15,max_iter=5000):
         print('Il metodo non converge')
         return None
 
-def SORSimmetric(A:sparse._matrix,b,x0,tol=1e-15,max_iter=5000,omega=1.0):
+def SORSymmetric(A:sparse._matrix,b,x0,tol=1e-15,max_iter=5000,omega=1.0):
     D,E,F=split(A)
     M=D-omega*E
     N=-(omega*F+(1-omega)*D)
@@ -99,9 +97,9 @@ def SORSimmetric(A:sparse._matrix,b,x0,tol=1e-15,max_iter=5000,omega=1.0):
 A=sparse.csr_matrix(np.array([[4,0,0],[0,4,0],[0,0,4]]))
 b=np.array([1,2,3])
 x0=np.random.rand(3)
-print(Jacobi(A,b,x0))
-print(SORForward(A,b,x0))
-print(SORBackward(A,b,x0))
-print(SORSimmetric(A,b,x0))
+print("Jacobi",Jacobi(A,b,x0))
+print("SORForward",SORForward(A,b,x0))
+print("SORBackward",SORBackward(A,b,x0))
+print("SORSymmetric"SORSymmetric(A,b,x0))
 
 print("\n\n",spla.spsolve(A,b))
