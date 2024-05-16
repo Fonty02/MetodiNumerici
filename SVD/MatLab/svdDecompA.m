@@ -49,7 +49,7 @@ fbar = mean(S,2); %immagine media
 
 A = S-fbar; %matrice A -> ogni immagine sottrata la media
 
-[U, ~, ~] = svd(A, 0); %siccome mi serve solo la matrice U per il range di A, non mi interessa calcolare SVD completa. 
+[U, ~, ~] = svd(A); %siccome mi serve solo la matrice U per il range di A, non mi interessa calcolare SVD completa. 
 RangeA = U(:,rank(A)); %Range di A
 X = RangeA'*A;
 
