@@ -50,7 +50,6 @@ fbar = mean(S,2); %immagine media
 A = S-fbar; %matrice A -> ogni immagine sottrata la media
 
 [U, ~, ~] = svd(A, 0); %siccome mi serve solo la matrice U per il range di A, non mi interessa calcolare SVD completa. 
-rank(A)
 RangeA = U(:,rank(A)); %Range di A
 X = RangeA'*A;
 
@@ -58,9 +57,7 @@ X = RangeA'*A;
 faccia_nota = S(:,1); %prima faccia del database
 %calcolo la proiezione della faccia nota sul range di A
 proiezione = RangeA'*(faccia_nota-fbar);
-size(proiezione)
 %calcolo la distanza tra la proiezione e ogni colonna di X e prendo la più piccola
-%distanza_min=valore massimo possibile
 distanza_min = inf;
 for i=1:N
     distanza = norm(proiezione-X(:,i));
@@ -85,4 +82,6 @@ for i=1:N
 end
 distanza_min_new_face
 
+
+end
 
