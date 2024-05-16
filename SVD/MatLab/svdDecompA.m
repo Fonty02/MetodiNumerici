@@ -55,8 +55,7 @@ X = RangeA'*A;
 
 %prendo una faccia della stessa persona (ovvero una colonna di S)
 path_faccia_nota='C:\Users\fonta\Desktop\MetodiNumerici\SVD\MatLab\faces94\faces94\female\9336923\9336923.1.jpg';
-faccia_nota = double(rgb2gray(imread(path_faccia_nota)));
-faccia_nota = reshape(faccia_nota,M,1);
+faccia_nota = double(reshape(rgb2gray(imread(path_faccia_nota)),M,1));
 %calcolo la proiezione della faccia nota sul range di A
 proiezione = RangeA'*(faccia_nota-fbar);
 %calcolo la distanza tra la proiezione e ogni colonna di X e prendo la più piccola
@@ -67,7 +66,6 @@ for i=1:N
         distanza_min = distanza;
     end
 end
-distanza_min
 figure()
 imshow(reshape(uint8(faccia_nota+(fbar)),ss1,ss2)); %visualizzo la faccia nota
 title(distanza_min)
@@ -75,8 +73,7 @@ title(distanza_min)
 
 %prendo una faccia di una persona DIVERSA
 path_new_face = 'C:\Users\fonta\Desktop\MetodiNumerici\SVD\MatLab\faces94\faces94\female\anpage\anpage.3.jpg';
-new_face = double(rgb2gray(imread(path_new_face)));
-new_face = reshape(new_face,M,1);
+new_face = double(reshape(rgb2gray(imread(path_new_face)),M,1));
 proiezione_new_face = RangeA'*(new_face-fbar);
 distanza_min_new_face = inf;
 for i=1:N
@@ -85,7 +82,6 @@ for i=1:N
         distanza_min_new_face = distanza;
     end
 end
-distanza_min_new_face
 figure()
 imshow(reshape(uint8(new_face+(fbar)),ss1,ss2)); %visualizzo la faccia nota
 title(distanza_min_new_face)
