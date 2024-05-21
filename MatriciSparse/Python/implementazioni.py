@@ -73,14 +73,16 @@ def SORBackward(A:sparse._matrix,b,x0,tol=1e-15,max_iter=5000):
 
 def SORSymmetric(A:sparse._matrix,b,x0,tol=1e-15,max_iter=5000,omega=1.0):
     D,E,F=split(A)
-    M=D-omega*E
-    N=-(omega*F+(1-omega)*D)
+    ME=D-omega*E
+    NF=-(omega*F+(1-omega)*D)
+    MF=D-omega*F
+    NE=-(omega*E+(1-omega)*D)
     b=omega*b
     it=0
     stop=False
     while it<max_iter and not stop:
-        x1=spla.spsolve(M,N @ x0 + b)
-        x2=spla.spsolve(M,N @ x1 + b)
+        x1=spla.spsolve(ME,NF @ x0 + b)
+        x2=spla.spsolve(MF,NE @ x1 + b)
         if np.linalg.norm(x1-x0)<tol:
             stop=True
             break
