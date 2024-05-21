@@ -133,7 +133,7 @@ def Met_PotenzeNorm(u0,A,tol=1e-15,it_max=10000):
 def Met_PotenzeGoogle(u0,A,tol=1e-15,it_max=10000,alfa=0.85):
     n_it = 0
     n=A.shape[0]
-    #u1 = alfa*A@u0 + (((1-alfa)/n)*u0.sum()*np.ones(n)).reshape(n,1) SPARSO
+    #u1 = alfa*A@u0 + (((1-alfa)/n)*u0.sum()*np.ones(n)).reshape(n,1) SPARSO -> più costoso perchè alla fine tanto diventa pieno
     u1 = alfa*A@u0 + (((1-alfa)/n)*u0.sum()) # PIENO
     u1 = u1*(1/( np.linalg.norm(u1)))
     lam0 = u1.T@(A@u1)/(u1.T@u1)
