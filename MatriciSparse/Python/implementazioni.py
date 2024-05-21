@@ -2,6 +2,8 @@ import numpy as np
 import scipy as sp
 import scipy.sparse as sparse
 import scipy.sparse.linalg as spla
+import matplotlib.pylab as plt
+import time
 
 
 def split(A):
@@ -93,9 +95,71 @@ def SORSymmetric(A:sparse._matrix,b,x0,tol=1e-15,max_iter=5000,omega=1.0):
     else:
         print('Il metodo non converge')
         return None
-    
 
 
+
+def Met_PotenzeNorm(u0,A,tol=1e-15,it_max=10000):
+    n_it = 0
+    u1 = A@u0  #sarebbe xk
+    u1 = u1*(1/( np.linalg.norm((u1).todense()))) #Normalizzazione (sarebbe zk)    #ci potrebbe mettere un IF per vedere se abbiamo sparse o dense e fare la norma giusta
+    lam0 = u1.T@(A@u1)/(u1.T@u1)
+    u0 = u1
+    #Collezioniamo in una lista le varie approssimazioni di lambda
+    #approx = []   
+    #approx.append(lam0)
+    approx=lam0
+    #Usiamo anche un'altra lista per memorizzare le varie stime dell'errore
+    #err = []
+    #err.append(1)
+    err=1
+    while((err>tol) & (n_it <it_max) ):
+        u1 = A@u0
+        u1 = u1*(1/( np.linalg.norm((u1).todense())))
+      
+        lam = u1.T@(A@u1)/(u1.T@u1)
+        #approx.append(np.asarray(lam))
+        approx=lam
+        err=abs(lam-lam0)/(1+abs(lam))
+        #err.append(abs(lam-lam0)/(1+abs(lam))) #Errore relativo, crea una matrice 1x1 (questo è fatto a scopo didattico)
+        lam0 = lam
+        u0 = u1
+        n_it = n_it+1
+        
+    return lam,u0,n_it,err, approx
+
+
+
+
+def Met_PotenzeGoogle(u0,A,tol=1e-15,it_max=10000,alfa=0.85):
+    n_it = 0
+    n=A.shape[0]
+    #u1 = alfa*A@u0 + (((1-alfa)/n)*u0.sum()*np.ones(n)).reshape(n,1) SPARSO
+    u1 = alfa*A@u0 + (((1-alfa)/n)*u0.sum()) # PIENO
+    u1 = u1*(1/( np.linalg.norm(u1)))
+    lam0 = u1.T@(A@u1)/(u1.T@u1)
+    u0 = u1
+    err=1
+    while((err>tol) & (n_it <it_max) ):
+        #u1 = alfa*A@u0 + (((1-alfa)/n)*u0.sum()*np.ones(n)).reshape(n,1)
+        u1 = alfa*A@u0 + (((1-alfa)/n)*u0.sum())
+        u1 = u1*(1/( np.linalg.norm(u1)))
+        lam = u1.T@(A@u1)/(u1.T@u1)
+        err=abs(lam-lam0)/(1+abs(lam))
+        lam0 = lam
+        u0 = u1
+        n_it = n_it+1
+        
+    return lam,u0,n_it,err
+
+
+
+
+
+
+
+
+
+'''
 A=sparse.csr_matrix(np.array([[4,0,0],[0,4,0],[0,0,4]]))
 b=np.array([1,2,3])
 x0=np.random.rand(3)
@@ -105,3 +169,25 @@ print("SORBackward",SORBackward(A,b,x0))
 print("SORSymmetric",SORSymmetric(A,b,x0))
 
 print("\n\n",spla.spsolve(A,b))
+'''
+
+n=1000
+A = sparse.rand(n, n, density=0.15, format="csr", random_state=42)
+#u0 = sparse.rand(n, 1, density=0.35, format="csr", random_state=42)
+u0=np.random.rand(n)
+t1=time.time()
+lam,u0,n_it,err = Met_PotenzeGoogle(u0,A)
+t2=time.time()
+print('tempo',t2-t1)
+print('autovalore',lam)
+print('iterate',n_it)
+print('errore',err)
+
+'''
+err = [err[i].item() for i in range(1,len(err))]
+plt.semilogy(err)
+plt.show()
+'''
+A = A # + scipy.sparse.identity(n)
+A=A/np.max(A.sum(1),1)
+A.sum(1) #creata matrice di adiacenza. Ha ancora i dead end però
