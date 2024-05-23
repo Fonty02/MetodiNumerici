@@ -152,6 +152,39 @@ def Met_PotenzeGoogle(u0,A,tol=1e-15,it_max=10000,alfa=0.85):
     return lam,u0,n_it,err
 
 
+def bidiagonalize_LGK(A, b):
+    m, n = A.shape
+    P = np.zeros((m, n+1))
+    B = np.zeros((n+1, n))
+    Z = np.zeros((n, n))
+    betas=np.zeros(n+1)
+    alphas=np.zeros(n)
+    beta1p1=b
+    betas[0]=np.linalg.norm(beta1p1)
+    zeta=np.zeros(n)
+    P[:,0]=beta1p1/betas[0]
+    for i in range(n):
+        w=A.T@P[:,i]+betas[i]*zeta
+        alphas[i]=np.linalg.norm(w)
+        zeta=w/alphas[i]
+        Z[:,i]=zeta
+        y=A@zeta-alphas[i]*P[:,i]
+        betas[i+1]=np.linalg.norm(y)
+        P[:,i+1]=y/betas[i+1]
+    B[0,0]=alphas[0]
+    for i in range(1,n):
+        B[i,i]=alphas[i]
+        B[i,i-1]=betas[i]
+    B[n,n-1]=betas[n]
+    return P, B, Z
+
+
+
+A = sparse.rand(10, 4, density=0.8, format="csr", random_state=42)
+b = np.random.rand(10)
+P,B,Z=bidiagonalize_LGK(A,b)
+A_ricostruita=P@B@Z.T
+print(np.linalg.norm(A-A_ricostruita))
 
 
 
@@ -169,7 +202,7 @@ print("SORBackward",SORBackward(A,b,x0))
 print("SORSymmetric",SORSymmetric(A,b,x0))
 
 print("\n\n",spla.spsolve(A,b))
-'''
+
 
 n=1000
 A = sparse.rand(n, n, density=0.15, format="csr", random_state=42)
@@ -183,11 +216,11 @@ print('autovalore',lam)
 print('iterate',n_it)
 print('errore',err)
 
-'''
+
 err = [err[i].item() for i in range(1,len(err))]
 plt.semilogy(err)
 plt.show()
-'''
+
 A = A # + scipy.sparse.identity(n)
 A=A/np.max(A.sum(1),1)
-A.sum(1) #creata matrice di adiacenza. Ha ancora i dead end però
+A.sum(1) #creata matrice di adiacenza. Ha ancora i dead end però'''
