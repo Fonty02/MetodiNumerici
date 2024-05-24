@@ -35,11 +35,11 @@ def randomizedSVD_v2(A,l,q):
 
 def randomizedSVD_v3(A,l,q):
    m,n = A.shape
-   Omega = np.random.randn(n,l)
-   prodotto=A.T@A
-   for i in range(1,q):
-    prodotto=prodotto@prodotto
-   Y=A @ Omega
+   Omega = np.random.randn(m,l)
+   Y = A @ A.T
+   for _ in range(q):
+    Y = Y @ Y
+   Y = Y @ Omega
    Q,_ = np.linalg.qr(Y, mode='complete')
    B = Q @ A
    Sigma=np.zeros((m,n))
