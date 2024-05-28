@@ -179,12 +179,49 @@ def bidiagonalize_LGK(A, b):
     return P, B, Z
 
 
+def LGKbidiag(A,b,k): #quello della prof
+    m,n=A.shape
+    tolb=1e-12 #tolleranza per il calcolo degli elementi diagonali di B (potrebbero essere nulli)
+    beta=np.zeros((k+2,1))
+    alfa=np.zeros((k+1,1))
+    P=sparse.csc_matrix((m,k+2))
+    Z=sparse.csc_matrix((n,k+1))
+    beta[0]=np.linalg.norm(b,2)
+    P[:,0]=b/beta[0] #MATRICE C (b A) -> prima colonna B
+    Z[:,0]=A.T@P[:,0]
+    alfa[0]=np.linalg.norm((Z[:,0]).todense(),2)
+    Z[:,0]=Z[:,0]/alfa[0]
+    P[:,1]=A@Z[:,0]-alfa[0][0]*P[:,0]
+    beta[1]=np.linalg.norm((P[:,1]).todense(),2)
+    P[:,1]=P[:,1]/beta[1]
+    for i in range(1,k+1):
+        Z[:,i]=A.T@P[:,i]-beta[i][0]*Z[:,i-1]
+        alfa[i]=np.linalg.norm((Z[:,i]).todense(),2)
+        Z[:,i]=Z[:,i]/alfa[i]
+        P[:,i+1]=A@Z[:,i]-alfa[i][0]*P[:,i]
+        beta[i+1]=np.linalg.norm((P[:,i+1]).todense(),2)
+        P[:,i+1]=P[:,i+1]/beta[i+1]
+        if (abs(alfa[i])<tolb or abs(beta[i+1])<tolb):
+            break
+    km=i-1
+    diags=np.zeros((2,km+1))
+    diags[0,:]=beta[1:km+2].reshape(km+1)
+    diags[1,:]=alfa[0:km+1].reshape(km+1)
+    ioff=np.array([-1,0])
+    B=sparse.dia_matrix((diags,ioff),shape=(km+2,km+1))
+    return P[:,0:km+2],Z[:,0:km+1],B,beta[0:km+2],alfa[0:km+2]
+
+
 
 A = sparse.rand(10, 4, density=0.8, format="csr", random_state=42)
 b = np.random.rand(10)
 P,B,Z=bidiagonalize_LGK(A,b)
 A_ricostruita=P@B@Z.T
 print(np.linalg.norm(A-A_ricostruita))
+
+P,Z,B,beta,alfa=LGKbidiag(A,b,10)
+A_ricostruita=P@B@Z.T
+print(np.linalg.norm(A-A_ricostruita.todense()))
 
 
 
