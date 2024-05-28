@@ -152,31 +152,44 @@ def Met_PotenzeGoogle(u0,A,tol=1e-15,it_max=10000,alfa=0.85):
     return lam,u0,n_it,err
 
 
-def bidiagonalize_LGK(A, b): #vedi correzioni suggerite (devi mettere la prima colonna come b e cambiare il calcolo e viene)
+def bidiagonalize_LGK(A, b):
     m, n = A.shape
+    tolb = 1e-12
+    
     P = np.zeros((m, n+1))
     B = np.zeros((n+1, n))
     Z = np.zeros((n, n))
-    betas=np.zeros(n+1)
-    alphas=np.zeros(n)
-    beta1p1=b
-    betas[0]=np.linalg.norm(beta1p1)
-    zeta=np.zeros(n)
-    P[:,0]=beta1p1/betas[0]
-    for i in range(n):
-        w=A.T@P[:,i]+betas[i]*zeta
-        alphas[i]=np.linalg.norm(w)
-        zeta=w/alphas[i]
-        Z[:,i]=zeta
-        y=A@zeta-alphas[i]*P[:,i]
-        betas[i+1]=np.linalg.norm(y)
-        P[:,i+1]=y/betas[i+1]
-    B[0,0]=alphas[0]
-    for i in range(1,n):   #puoi usare numpy.diag
-        B[i,i]=alphas[i]
-        B[i,i-1]=betas[i]
-    B[n,n-1]=betas[n]
-    return P, B, Z
+    beta = np.zeros(n+2)
+    alfa = np.zeros(n)
+        
+    # PRIMO CICLO
+    beta[0] = np.linalg.norm(b, 2)
+    P[:, 0] = b / beta[0]
+    Z[:, 0] = A.T @ P[:, 0]
+    alfa[0]=np.linalg.norm(Z[:,0],2)
+    Z[:,0]=Z[:,0]/alfa[0]
+    P[:, 1] = A @ Z[:, 0] - alfa[0] * P[:, 0]
+    beta[1]=np.linalg.norm(P[:,1],2)
+    P[:,1]=P[:,1]/beta[1]
+    
+    
+    for i in range(1,n):
+        Z[:,i]=A.T@P[:,i]-beta[i]*Z[:,i-1]
+        alfa[i]=np.linalg.norm(Z[:,i],2)
+        Z[:,i]=Z[:,i]/alfa[i]
+        P[:,i+1]=A@Z[:,i]-alfa[i]*P[:,i]
+        beta[i+1]=np.linalg.norm(P[:,i+1],2)
+        P[:,i+1]=P[:,i+1]/beta[i+1]
+        if (abs(alfa[i])<tolb or abs(beta[i+1])<tolb):
+            break
+    km=i-1
+    diags=np.zeros((2,km+1))
+    diags[0,:]=beta[1:km+2].reshape(km+1)
+    diags[1,:]=alfa[0:km+1].reshape(km+1)
+    ioff=np.array([-1,0])
+    B=sparse.dia_matrix((diags,ioff),shape=(km+2,km+1))
+    return P[:,0:km+2],B,Z[:,0:km+1]
+
 
 
 def LGKbidiag(A,b,k): #quello della prof
@@ -214,9 +227,13 @@ def LGKbidiag(A,b,k): #quello della prof
 
 A=sparse.rand(10,4,density=0.1,format='csr')
 b=np.random.rand(10)
-P,Z,B,beta,alfa=LGKbidiag(A,b,10)
+P,Z,B,beta,alfa=LGKbidiag(A,b,4)
 A_ricostruita=P@B@Z.T
 print(np.linalg.norm(A-A_ricostruita.todense()))
+
+P,B,Z=bidiagonalize_LGK(A,b)
+A_ricostruita=P@B@Z.T
+print(np.linalg.norm(A-A_ricostruita))
 
 
 
