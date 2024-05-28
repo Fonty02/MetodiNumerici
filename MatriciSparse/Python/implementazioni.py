@@ -152,7 +152,7 @@ def Met_PotenzeGoogle(u0,A,tol=1e-15,it_max=10000,alfa=0.85):
     return lam,u0,n_it,err
 
 
-def bidiagonalize_LGK(A, b):
+def bidiagonalize_LGK(A, b): #vedi correzioni suggerite (devi mettere la prima colonna come b e cambiare il calcolo e viene)
     m, n = A.shape
     P = np.zeros((m, n+1))
     B = np.zeros((n+1, n))
@@ -172,7 +172,7 @@ def bidiagonalize_LGK(A, b):
         betas[i+1]=np.linalg.norm(y)
         P[:,i+1]=y/betas[i+1]
     B[0,0]=alphas[0]
-    for i in range(1,n):
+    for i in range(1,n):   #puoi usare numpy.diag
         B[i,i]=alphas[i]
         B[i,i-1]=betas[i]
     B[n,n-1]=betas[n]
@@ -212,14 +212,8 @@ def LGKbidiag(A,b,k): #quello della prof
     B=sparse.dia_matrix((diags,ioff),shape=(km+2,km+1))
     return P[:,0:km+2],Z[:,0:km+1],B,beta[0:km+2],alfa[0:km+2]
 
-
-
-A = sparse.rand(10, 4, density=0.8, format="csr", random_state=42)
-b = np.random.rand(10)
-P,B,Z=bidiagonalize_LGK(A,b)
-A_ricostruita=P@B@Z.T
-print(np.linalg.norm(A-A_ricostruita))
-
+A=sparse.rand(10,4,density=0.1,format='csr')
+b=np.random.rand(10)
 P,Z,B,beta,alfa=LGKbidiag(A,b,10)
 A_ricostruita=P@B@Z.T
 print(np.linalg.norm(A-A_ricostruita.todense()))
