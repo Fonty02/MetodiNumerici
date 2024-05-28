@@ -180,6 +180,7 @@ def bidiagonalize_LGK(A, b):
 
 
 def LGKbidiag(A,b,k): #quello della prof
+    #k è il numero di componenti (serve poi per il calcolo dei minimi quadrati)
     m,n=A.shape
     tolb=1e-12 #tolleranza per il calcolo degli elementi diagonali di B (potrebbero essere nulli)
     beta=np.zeros((k+2,1))
