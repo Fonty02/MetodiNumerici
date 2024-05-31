@@ -241,7 +241,7 @@ print(np.linalg.norm(A-A_ricostruita))
 
 
 
-'''
+
 A=sparse.csr_matrix(np.array([[4,0,0],[0,4,0],[0,0,4]]))
 b=np.array([1,2,3])
 x0=np.random.rand(3)
@@ -252,7 +252,7 @@ print("SORSymmetric",SORSymmetric(A,b,x0))
 
 print("\n\n",spla.spsolve(A,b))
 
-
+'''
 n=1000
 A = sparse.rand(n, n, density=0.15, format="csr", random_state=42)
 #u0 = sparse.rand(n, 1, density=0.35, format="csr", random_state=42)
