@@ -1,0 +1,45 @@
+\section{Introduzione}
+\subsection{Traccia Progetto 1}
+\begin{itemize}
+    \item 
+
+Leggere le seguenti due immagini in Matlab, usando i comandi:
+
+\begin{verbatim}
+    imt1 = imread('Bern1.bmp');
+    imt2 = imread('Bern2.bmp');
+    
+    if(size(imt1,3)>1)
+        imt1 = rgb2gray(imt1);
+    end
+    if(size(imt2,3)>1)
+        imt2 = rgb2gray(imt2);
+    end
+\end{verbatim}
+
+ \item Costruire la matrice della differenza, avendo prima trasformato i dati in tipo double:
+ \begin{verbatim}
+    imt1 = double(imt1)
+    imt2 = double(imt2)
+    Diff_Mat = abs(imt2-imt1)    
+ \end{verbatim}
+
+ 
+ \item Calcolare la SVD troncata di Diff
+ Mat, in particolare trascrivere in Matlab almeno tre criteri
+ per selezionare automaticamente il numero di componenti k da trattenere.
+ \item Calcolare l’errore relativo in norma 2 e in norma di Frobenius per l’approssimazione ottenuta.
+ \item Trasformare la matrice dell’approssimazione in un vettore colonna e scalare i valori tra 0 e 1.
+ \item Applicare un algoritmo di binarizzazione variando la soglia (per un esempio, si veda il file
+ Grad img.m).
+ \item Visualizzare l’immagine finale, fancendo un opportuno “reshape” e utilizzando il comando imshow.
+ L’immagine cos`ı ottenuta dovrebbe avere in bianco i pixel che identificano zone di cambiamento
+ tra l’immagine I1 e l’immagine I2, mentre in nero, i pixel relativi alle zone non cambiate.
+ \item Commentare i risultati
+
+\end{itemize}
+
+\subsection{Dati iniziali}
+La matrice \textbf{Diff\_Mat} è una matrice di dimensione 301x301, in quanto le immagini \textbf{Bern1.bmp} e \textbf{Bern2.bmp} sono immagini di tale dimensione.\\
+Il rank della matrice \textbf{Diff\_Mat} è 301 dunque massimo. Il che significa che tutti i valori singolari sono non nulli.\\
+Le matrici U, S e V hanno dimensioni rispettivamente 301x301, 301x301 e 301x301.\\

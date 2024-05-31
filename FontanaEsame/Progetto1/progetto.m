@@ -19,6 +19,7 @@ fj = (valori_singolari(1:rank_diff).^2) / sum(valori_singolari(1:rank_diff).^2);
 
 %PRIMO CRITERIO DI TRONCAMENTO
 fprintf("SVD TRONCATA -> CRITERIO GUTTMAN-KEISER\n");
+tic;
 valori_singolari_troncati=valori_singolari(valori_singolari>1);
 numero_valori_singolari_troncati=length(valori_singolari_troncati);
 fprintf("NUMERO DI VALORI SINGOLARI MAGGIORI DI 1= %d\n",numero_valori_singolari_troncati);
@@ -26,9 +27,11 @@ U_troncato=U(:,1:numero_valori_singolari_troncati);
 V_troncato=V(:,1:numero_valori_singolari_troncati);
 S_troncato=S(1:numero_valori_singolari_troncati,1:numero_valori_singolari_troncati);
 Diff_Mat_troncata=U_troncato*S_troncato*V_troncato';
+tempo=toc;
+fprintf("TEMPO IMPIEGATO PER IL TRONCAMENTO=%f\n",tempo);
 [righe,colonne]=size(Diff_Mat_troncata);
-fprintf("ERRORE DI TRONCAMENTO IN NORMA 2=%f\n",norm(Diff_Mat-Diff_Mat_troncata,2));
-fprintf("ERRORE DI TRONCAMENTO IN NORMA FROBENIUS=%f\n\n\n",norm(Diff_Mat-Diff_Mat_troncata,'fro'));
+fprintf("ERRORE DI TRONCAMENTO IN NORMA 2=%f\n",norm(Diff_Mat-Diff_Mat_troncata,2)/norm(Diff_Mat,2))
+fprintf("ERRORE DI TRONCAMENTO IN NORMA FROBENIUS=%f\n\n\n",norm(Diff_Mat-Diff_Mat_troncata,'fro')/norm(Diff_Mat,'fro'));
 Diff_Mat_Troncata_vettore=Diff_Mat_troncata(:);
 X_min = min(Diff_Mat_Troncata_vettore);
 X_max = max(Diff_Mat_Troncata_vettore);
@@ -51,6 +54,7 @@ title('Immagine differenza troncata');
 
 %SECONDO CRIERIO DI TRONCAMENTO
 fprintf("SVD TRONCATA -> CRITERIO DI TRONCAMENTO SCREENPLOT DI COTTEL\n");
+tic;
 figure();
 plot(valori_singolari);
 title('Screenplot');
@@ -67,9 +71,11 @@ U_troncato=U(:,1:numero_valori_singolari_troncati);
 V_troncato=V(:,1:numero_valori_singolari_troncati);
 S_troncato=S(1:numero_valori_singolari_troncati,1:numero_valori_singolari_troncati);
 Diff_Mat_troncata=U_troncato*S_troncato*V_troncato';
+tempo=toc;
+fprintf("TEMPO IMPIEGATO PER IL TRONCAMENTO=%f\n",tempo);
 [righe,colonne]=size(Diff_Mat_troncata);
-fprintf("ERRORE DI TRONCAMENTO IN NORMA 2=%f\n ",norm(Diff_Mat-Diff_Mat_troncata,2));
-fprintf("ERRORE DI TRONCAMENTO IN NORMA FROBENIUS=%f\n ",norm(Diff_Mat-Diff_Mat_troncata,'fro'));
+fprintf("ERRORE DI TRONCAMENTO IN NORMA 2=%f\n ",norm(Diff_Mat-Diff_Mat_troncata,2)/norm(Diff_Mat,2));
+fprintf("ERRORE DI TRONCAMENTO IN NORMA FROBENIUS=%f\n ",norm(Diff_Mat-Diff_Mat_troncata,'fro')/norm(Diff_Mat,'fro'));
 fprintf("MINIMO NORMA 2 = %f\n",valori_singolari(numero_valori_singolari_troncati+1));
 fprintf("MINIMO NORMA FROBENIUS = %f\n\n\n ",sqrt(sum(valori_singolari(numero_valori_singolari_troncati+1:rank_diff).^2)));
 Diff_Mat_Troncata_vettore=Diff_Mat_troncata(:);
@@ -96,6 +102,7 @@ title('Immagine differenza troncata');
 
 %TERZO CRITERIO DI TRONCAMENTO
 fprintf("SVD TRONCATA -> CRITERIO DI TRONCAMENTO BASATO SULL'ENTROPIA\n");
+tic;
 entropiaMatrice = -sum(fj .* log(fj)) / log(rank_diff);
 % Trova il primo indice dove la funzione cumulativa supera l'entropia
 F = cumsum(fj);
@@ -107,9 +114,11 @@ U_troncato=U(:,1:numero_valori_singolari_troncati);
 V_troncato=V(:,1:numero_valori_singolari_troncati);
 S_troncato=S(1:numero_valori_singolari_troncati,1:numero_valori_singolari_troncati);
 Diff_Mat_troncata=U_troncato*S_troncato*V_troncato';
+tempo=toc;
+fprintf("TEMPO IMPIEGATO PER IL TRONCAMENTO=%f\n",tempo);
 [righe,colonne]=size(Diff_Mat_troncata);
-fprintf("ERRORE DI TRONCAMENTO IN NORMA 2 =%f\n ",norm(Diff_Mat-Diff_Mat_troncata,2));
-fprintf("ERRORE DI TRONCAMENTO IN NORMA FROBENIUS =%f\n ",norm(Diff_Mat-Diff_Mat_troncata,'fro'));
+fprintf("ERRORE DI TRONCAMENTO IN NORMA 2 =%f\n ",norm(Diff_Mat-Diff_Mat_troncata,2)/norm(Diff_Mat,2));
+fprintf("ERRORE DI TRONCAMENTO IN NORMA FROBENIUS =%f\n ",norm(Diff_Mat-Diff_Mat_troncata,'fro')/norm(Diff_Mat,'fro'));
 fprintf("MINIMO NORMA 2 =%f\n",valori_singolari(numero_valori_singolari_troncati+1));
 fprintf("MINIMO NORMA FROBENIUS =%f\n\n\n ",sqrt(sum(valori_singolari(numero_valori_singolari_troncati+1:rank_diff).^2)));
 Diff_Mat_Troncata_vettore=Diff_Mat_troncata(:);
@@ -136,8 +145,9 @@ title('Immagine differenza troncata');
 
 %QUARTO CRITERIO DI TRONCAMENTO
 fprintf("SVD TRONCATA -> CRITERIO DI ENERGIA\n");
+tic;
 energia = sum(valori_singolari.^2);
-perc_ = 0.75;
+perc_ = 0.9;
 numero_valori_singolari_troncati = find(cumsum(valori_singolari.^2) / energia >= perc_, 1);
 fprintf('Energia = %f, suggerito k = %d\n', energia, numero_valori_singolari_troncati);
 fprintf("%d%% dell'energia totale=%f \n", perc_*100, perc_*energia);
@@ -146,9 +156,11 @@ U_troncato=U(:,1:numero_valori_singolari_troncati);
 V_troncato=V(:,1:numero_valori_singolari_troncati);
 S_troncato=S(1:numero_valori_singolari_troncati,1:numero_valori_singolari_troncati);
 Diff_Mat_troncata=U_troncato*S_troncato*V_troncato';
+tempo=toc;
+fprintf("TEMPO IMPIEGATO PER IL TRONCAMENTO=%f\n",tempo);
 [righe,colonne]=size(Diff_Mat_troncata);
-fprintf("ERRORE DI TRONCAMENTO IN NORMA 2 =%f\n",norm(Diff_Mat-Diff_Mat_troncata,2));
-fprintf("ERRORE DI TRONCAMENTO IN NORMA FROBENIUS =%f\n ",norm(Diff_Mat-Diff_Mat_troncata,'fro'));
+fprintf("ERRORE DI TRONCAMENTO IN NORMA 2 =%f\n",norm(Diff_Mat-Diff_Mat_troncata,2)/norm(Diff_Mat,2));
+fprintf("ERRORE DI TRONCAMENTO IN NORMA FROBENIUS =%f\n ",norm(Diff_Mat-Diff_Mat_troncata,'fro')/norm(Diff_Mat,'fro'));
 fprintf("MINIMO NORMA 2 =%f \n",valori_singolari(numero_valori_singolari_troncati+1));
 fprintf("MINIMO NORMA FROBENIUS =%f\n\n\n",sqrt(sum(valori_singolari(numero_valori_singolari_troncati+1:rank_diff).^2)));
 Diff_Mat_Troncata_vettore=Diff_Mat_troncata(:);
@@ -174,6 +186,7 @@ title('Immagine differenza troncata');
 
 %QUINTO CRITERIO DI TRONCAMENTO
 fprintf("SVD TRONCATA -> CRITERIO DI TRONCAMENTO K-MEANS ISOLATION FOREST\n");
+tic;
 log_fj = log(fj);
 [idx,C] = kmeans(log_fj, 2);
 cluster_informazione = find(idx == idx(1));
@@ -189,9 +202,11 @@ U_troncato=U(:,1:numero_valori_singolari_troncati);
 V_troncato=V(:,1:numero_valori_singolari_troncati);
 S_troncato=S(1:numero_valori_singolari_troncati,1:numero_valori_singolari_troncati);
 Diff_Mat_troncata=U_troncato*S_troncato*V_troncato';
+tempo=toc;
+fprintf("TEMPO IMPIEGATO PER IL TRONCAMENTO=%f\n",tempo);
 [righe,colonne]=size(Diff_Mat_troncata);
-fprintf("ERRORE DI TRONCAMENTO IN NORMA 2 =%f\n",norm(Diff_Mat-Diff_Mat_troncata,2));
-fprintf("ERRORE DI TRONCAMENTO IN NORMA FROBENIUS =%f\n ",norm(Diff_Mat-Diff_Mat_troncata,'fro'));
+fprintf("ERRORE DI TRONCAMENTO IN NORMA 2 =%f\n",norm(Diff_Mat-Diff_Mat_troncata,2)/norm(Diff_Mat,2));
+fprintf("ERRORE DI TRONCAMENTO IN NORMA FROBENIUS =%f\n ",norm(Diff_Mat-Diff_Mat_troncata,'fro')/norm(Diff_Mat,'fro'));
 fprintf("MINIMO NORMA 2 =%f \n",valori_singolari(numero_valori_singolari_troncati+1));
 fprintf("MINIMO NORMA FROBENIUS =%f\n\n\n",sqrt(sum(valori_singolari(numero_valori_singolari_troncati+1:rank_diff).^2)));
 Diff_Mat_Troncata_vettore=Diff_Mat_troncata(:);

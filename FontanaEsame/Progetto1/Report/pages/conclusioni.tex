@@ -1,0 +1,35 @@
+\section{Conclusioni}
+
+In questo progetto sono stati analizzati diversi criteri per la selezione del numero di valori singolari da mantenere nella SVD troncata di una matrice di differenza tra due immagini e diverse soglie per la binarizzazione dell'immagine risultante.\\
+
+\begin{table}[H]
+    \centering
+    \resizebox{\textwidth}{!}{
+    \begin{tabular}{|c|c|c|c|c|c|c|}
+    \hline
+     	\textbf{Criterio} & \textbf{Valore di k} & \textbf{Errore relativo \normsymbol} & \textbf{Errore relativo in \frobnormsymbol} & \textbf{Tempo} & \textbf{Memoria utilizzata} & \textbf{Soglia} \\
+    \hline
+    Guttman-Keiser & 301 & 0 & 0 & 0.0018s & 301x301 + 301 +301x301= 181.503 & 0.25 oppure 0.020784 (automatica) \\
+    \hline
+    Screenplot di Cottel & 7 & 0.111445 & 0.614371 & 0.07s & 7x301 + 7 + 301x7 = 4.221 & 0.25 simile all'originale, 0.39216 (automatica) simile all'approssimazione \\
+    \hline
+    Entropia & 116 &  0.047219 & 0.261994 & 0.0009s & 301x116 + 116 + 301x116 = 69.948 & 0.25 oppure 0.26275 (automatica) \\
+    \hline
+    Energia & 94 & 0.054367 & 0.315945 & 0.006s & 301x94 + 94 + 301x94 = 56.682 & 0.25 oppure 0.30196 (automatica) \\
+    \hline
+    K-Means Isolation Forest & 225 &  0.017432 & 0.065502 & 0.35s & 301x225 + 225 + 301x225 = 135.675 & 0.25 oppure 0.24706 (automatica) \\
+    \hline
+    \end{tabular}
+}
+    \caption{Risultati}
+\end{table}
+
+\noindent Per il calcolo della memoria utilizzata si è tenuto conto delle dimensioni delle matrici U, S e V troncate, in particolare di S si tiene conto della diagonale.\\
+
+\noindent Il criterio di Guttman-Keiser non si è rilevato utili in questo campo in quanto ha sovrastimato di molto il numero di valori singolari da mantenere, in questo caso specifico 301, che è il numero massimo possibile.\\
+Il criterio di Cottel, essendo basato sullo screenplot e sulla scelta soggettiva del gomito, in questo caso ha sottostimato di molto il numero di valori singolari da mantenere, in questo caso 7.\\
+Gli errori di approssimazione sono molto alti e il tempo di esecuzione è anche maggiore rispetto ad altri criteri che portano a errori minori. In questo caso una soglia più bassa scelta arbitrariamente (e non automaticamente) ha portato ad avere risultati più simili all'immagine originale che a quella troncata.\\
+Il criterio del K-Means isolation forest è il secondo per memoria occupata e primo per tempo di esecuzione impiegato. Sono stati selezionati 225 valori singolari.
+Due criteri molto simili dal punto di vista di errori, tempo di esecuzione e memoria sono Entropia ed Energia. In particolare quello dell'energia ha richiesto meno tempo, occupato meno memoria al costo di un errore leggermente superiore, rivelandosi di fatto il miglior criterio.
+
+\noindent Possiamo infine notare come in genere soglie molto basse abbiano portato a risultati migliori. In particolare la soglia 0.25 è risultata essere sempre molto simile a quella calcolata automaticamente, il che potrebbe portare vantagggi (si pensi a matrici molto più grandi in cui l'algoritmo di graythresh potrebbe impiegare molto tempo e ottenere risultati molto vicini a 0.25).\\
