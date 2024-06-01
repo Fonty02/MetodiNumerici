@@ -1,25 +1,195 @@
 A = sparse([4, 0, 0; 0, 4, 0; 0, 0, 4]);
+disp("A")
+disp(full(A));
 b = [1; 2; 3];
 x0 = rand(3, 1);
 
+disp("A COME MATRICE SPARSA")
+tic;
+soluzione = Jacobi(A, b, x0);
+tempo=toc;
 disp('Jacobi')
-disp(Jacobi(A, b, x0))
+disp(soluzione)
+disp('tempo')
+disp(tempo)
 
+tic;
+soluzione = SORForward(A, b, x0);
+tempo=toc;
 disp('SORForward')
-disp(SORForward(A, b, x0))
+disp(soluzione)
+disp('tempo')
+disp(tempo)
 
+
+tic;
+soluzione = SORBackward(A, b, x0);
+tempo=toc;
 disp('SORBackward')
-disp(SORBackward(A, b, x0))
+disp(soluzione)
+disp('tempo')
+disp(tempo)
 
+
+tic;
+soluzione = SORSymmetric(A, b, x0);
+tempo=toc;
 disp('SORSymmetric')
-disp(SORSymmetric(A, b, x0))
+disp(soluzione)
+disp('tempo')
+disp(tempo)
 
+
+tic;
+soluzione = A\b;
+tempo=toc;
 disp('Solver classico')
-disp(A\b)
+disp(soluzione)
+disp('tempo')
+disp(tempo)
+
+A = full(A);
+
+tic;
+soluzione = Jacobi(A, b, x0);
+tempo=toc;
+disp('Jacobi')
+disp(soluzione)
+disp('tempo')
+disp(tempo)
+
+tic;
+soluzione = SORForward(A, b, x0);
+tempo=toc;
+disp('SORForward')
+disp(soluzione)
+disp('tempo')
+disp(tempo)
+
+
+tic;
+soluzione = SORBackward(A, b, x0);
+tempo=toc;
+disp('SORBackward')
+disp(soluzione)
+disp('tempo')
+disp(tempo)
+
+
+tic;
+soluzione = SORSymmetric(A, b, x0);
+tempo=toc;
+disp('SORSymmetric')
+disp(soluzione)
+disp('tempo')
+disp(tempo)
+
+
+tic;
+soluzione = A\b;
+tempo=toc;
+disp('Solver classico')
+disp(soluzione)
+disp('tempo')
+disp(tempo)
+
+
+disp("MATRICE RANDOMICA A SPARSA GRANDE 10000x10000 con 90% di zeri")
+A=sprand(10000,10000,0.9);
+b=rand(10000,1);
+x0=rand(10000,1);
+
+%{
+Il metodo di Jacobi potrebbe dare errori in caso di matrici singolari
+tic;
+soluzione1 = Jacobi(A, b, x0);
+tempo=toc;
+disp('Jacobi')
+disp('tempo')
+disp(tempo)
+Jacobi
+%}
+tic;
+soluzione = A\b;
+tempo=toc;
+disp('Solver classico')
+disp('tempo')
+disp(tempo)
+
+%disp('Soluzioni uguali?')
+%disp(isequal(soluzione, soluzione1))
+
+disp("STESSA MATRICE A MA PIENA")
+A=full(A);
+%{
+
+tic;
+soluzione1 = Jacobi(A, b, x0);
+tempo=toc;
+disp('Jacobi')
+disp('tempo')
+disp(tempo)
+%}
+tic;
+soluzione = A\b;
+tempo=toc;
+disp('Solver classico')
+disp('tempo')
+disp(tempo)
+
+%disp('Soluzioni uguali?')
+%disp(isequal(soluzione, soluzione1))
+
+disp("MATRICE RANDOMICA A SPARSA GRANDE 10000x10000 con 40% di zeri")
+A=sprand(10000,10000,0.4);
+b=rand(10000,1);
+x0=rand(10000,1);
+
+%{
+Il metodo di Jacobi potrebbe dare errori in caso di matrici singolari
+tic;
+soluzione1 = Jacobi(A, b, x0);
+tempo=toc;
+disp('Jacobi')
+disp('tempo')
+disp(tempo)
+Jacobi
+%}
+tic;
+soluzione = A\b;
+tempo=toc;
+disp('Solver classico')
+disp('tempo')
+disp(tempo)
+
+%disp('Soluzioni uguali?')
+%disp(isequal(soluzione, soluzione1))
+
+disp("STESSA MATRICE A MA PIENA")
+A=full(A);
+%{
+
+tic;
+soluzione1 = Jacobi(A, b, x0);
+tempo=toc;
+disp('Jacobi')
+disp('tempo')
+disp(tempo)
+%}
+tic;
+soluzione = A\b;
+tempo=toc;
+disp('Solver classico')
+disp('tempo')
+disp(tempo)
+
+%disp('Soluzioni uguali?')
+%disp(isequal(soluzione, soluzione1))
 
 
 
 
+disp("METODO DELLE POTENZE PER MATRICE DI GOOGLE SPARSA")
 n = 1000;
 A = sprand(n, n, 0.15);
 u0 = rand(n, 1);

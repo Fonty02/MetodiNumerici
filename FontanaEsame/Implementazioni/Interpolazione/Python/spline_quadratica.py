@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import numpy as np
+import time
 
 def spline_quadratica(x, y, xx):
     n = len(x)
@@ -47,13 +48,14 @@ def spline_quadratica(x, y, xx):
 x = np.array([1, 2, 3, 4])
 y = np.array([2, 3, 5, 2])
 xx = np.linspace(1, 4, 100)
+tempo=time.time()
 yy = spline_quadratica(x, y, xx)
-
+tempo_finale=time.time()-tempo
 plt.plot(x, y, 'ro', label='Punti dati')
 plt.plot(xx, yy, 'b-', label='Interpolazione spline quadratica')
 plt.xlabel('x')
 plt.ylabel('y')
-plt.title('Interpolazione spline quadratica')
+plt.title(f'Interpolazione spline quadratica con tempo di esecuzione: {tempo_finale:.10f}')
 plt.legend()
 plt.grid(True)
 plt.show()

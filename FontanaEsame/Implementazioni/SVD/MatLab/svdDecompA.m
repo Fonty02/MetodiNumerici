@@ -10,8 +10,6 @@ function [A, U, fbar,M,ss1,ss2,N,RangeA] =svdDecompA
 % N = numero totale di immagini presenti nel database
 % RangeA = range di A
 
-%percorso di locazione del trial set---aggiornare con la propria
-%destinazione!!
 myFolder = 'C:\Users\fonta\Desktop\MetodiNumerici\SVD\MatLab\faces94\faces94\female\9336923';
 
 filePattern = fullfile(myFolder, '*.jpg');%cerco tutti e soli i files con estensione .jpg

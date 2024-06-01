@@ -33,44 +33,4 @@ end
 
  figure()
  montage({uint8(ref),uint8(Rimossa)})
- title("Originale e LaplaceFattoBene")
-
-
-
-
-
-
-
-
-
-%imshow(uint8(Rimossa))  %ho tolto in maniera sparsa il 25% dei pixel
- Mod=ref; %manteniamo il bordo
- Mod(2:end-1,2:end-1)=Rimossa(2:end-1,2:end-1);
-% figure()
-% montage({uint8(ref),uint8(Mod)})
-% title("Originale e perturbata")
-
- %uso laplace male
- Recon=zeros(m,n);
- for i=2:m-2
-     for j=2:n-2
-         Recon(i,j)=(Mod(i-1,j)+Mod(i+1,j)+Mod(i,j-1)+Mod(i,j+1))/4;  %qui sto sostituendo tutti i pixel, non solo quelli mancanti
-     end
- end
-
- Assembly=zeros(m,n);
- Assembly(1,:)=ref(1,:);
- Assembly(end,:)=ref(end,:);
- Assembly(:,1)=ref(:,1);
- Assembly(:,end)=ref(:,end);
- Assembly(2:end-1,2:end-1)=Recon(2:end-1,2:end-1);
- figure();
- montage({uint8(ref),uint8(Assembly)})
- title("Originale e Assembly")
-
-% con le "tecniche gamma" posso "ingannare l occhio umano"
-% Assembly=Assembly.^1.2;   %quando ci sono molti pixel neri vado a elevare per >1, per rendere piu scura <1
-% figure();
-% montage({uint8(ref),uint8(Assembly)})
-% title("Originale e gamma")
-
+ title("Originale e Laplace")

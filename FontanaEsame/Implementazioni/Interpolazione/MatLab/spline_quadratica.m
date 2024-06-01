@@ -1,4 +1,24 @@
-function yy=spline_quadratica(x,y,xx)
+x = [1, 2, 3, 4];
+y = [2, 3, 5, 2];
+xx = linspace(1, 4, 100);
+
+tic; % Avvia il cronometro
+yy = splineQuadratica(x, y, xx);
+tempo = toc; % Arresta il cronometro
+
+figure;
+plot(x, y, 'ro', 'DisplayName', 'Punti dati');
+hold on;
+plot(xx, yy, 'b-', 'DisplayName', 'Interpolazione spline quadratica');
+xlabel('x');
+ylabel('y');
+title(['Interpolazione spline quadratica con tempo di esecuzione: ', num2str(tempo)]);
+legend;
+grid on;
+hold off;
+
+
+function yy=splineQuadratica(x,y,xx)
     n=length(x);
     matrix=zeros(n+1,n+1);
     coeffienti=zeros(n+1,1);   %i coefficienti sono cosi organizzati-> b1 .. bn c2 .. cn
@@ -38,5 +58,6 @@ function yy=spline_quadratica(x,y,xx)
         index=find(xx>=x(i) & xx<=x(i+1));
         yy(index)=y(i)+b(i)*(xx(index)-x(i))+c(i)*(xx(index)-x(i)).^2;
     end
+end
     
     

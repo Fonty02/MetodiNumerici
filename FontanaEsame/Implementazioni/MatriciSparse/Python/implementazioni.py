@@ -98,7 +98,7 @@ def SORSymmetric(A:sparse._matrix,b,x0,tol=1e-15,max_iter=5000,omega=1.0):
 
 
 
-def Met_PotenzeNorm(u0,A,tol=1e-15,it_max=10000):
+def Met_PotenzeNorm(u0,A,tol=1e-15,it_max=100):
     n_it = 0
     u1 = A@u0  #sarebbe xk
     u1 = u1*(1/( np.linalg.norm((u1).todense()))) #Normalizzazione (sarebbe zk)    #ci potrebbe mettere un IF per vedere se abbiamo sparse o dense e fare la norma giusta
@@ -130,7 +130,7 @@ def Met_PotenzeNorm(u0,A,tol=1e-15,it_max=10000):
 
 
 
-def Met_PotenzeGoogle(u0,A,tol=1e-15,it_max=10000,alfa=0.85):
+def Met_PotenzeGoogle(u0,A,tol=1e-15,it_max=100,alfa=0.85):
     n_it = 0
     n=A.shape[0]
     #u1 = alfa*A@u0 + (((1-alfa)/n)*u0.sum()*np.ones(n)).reshape(n,1) SPARSO -> più costoso perchè alla fine tanto diventa pieno
@@ -225,51 +225,150 @@ def LGKbidiag(A,b,k): #quello della prof
     B=sparse.dia_matrix((diags,ioff),shape=(km+2,km+1))
     return P[:,0:km+2],Z[:,0:km+1],B,beta[0:km+2],alfa[0:km+2]
 
-A=sparse.rand(10,4,density=0.1,format='csr')
-b=np.random.rand(10)
-P,Z,B,beta,alfa=LGKbidiag(A,b,4)
-A_ricostruita=P@B@Z.T
-print(np.linalg.norm(A-A_ricostruita.todense()))
+# Esempio di utilizzo
+A = np.array([[4, 0, 0], [0, 4, 0], [0, 0, 4]], dtype=float)
+print("A")
+print(A)
 
-P,B,Z=bidiagonalize_LGK(A,b)
-A_ricostruita=P@B@Z.T
-print(np.linalg.norm(A-A_ricostruita))
+b = np.array([1, 2, 3], dtype=float)
+x0 = np.random.rand(3)
 
+print("A COME MATRICE SPARSA")
+A_sparse = sparse.csr_matrix(A)
+tic = time.time()
+soluzione = Jacobi(A_sparse, b, x0)
+tempo = time.time() - tic
+print('Jacobi')
+print(soluzione)
+print('tempo')
+print(tempo)
 
+tic = time.time()
+soluzione = SORForward(A_sparse, b, x0)
+tempo = time.time() - tic
+print('SORForward')
+print(soluzione)
+print('tempo')
+print(tempo)
 
+tic = time.time()
+soluzione = SORBackward(A_sparse, b, x0)
+tempo = time.time() - tic
+print('SORBackward')
+print(soluzione)
+print('tempo')
+print(tempo)
 
+tic = time.time()
+soluzione = SORSymmetric(A_sparse, b, x0)
+tempo = time.time() - tic
+print('SORSymmetric')
+print(soluzione)
+print('tempo')
+print(tempo)
 
+tic = time.time()
+soluzione = spla.spsolve(A_sparse, b)
+tempo = time.time() - tic
+print('Solver classico')
+print(soluzione)
+print('tempo')
+print(tempo)
 
+A = A_sparse.toarray()
 
+tic = time.time()
+soluzione = Jacobi(A, b, x0)
+tempo = time.time() - tic
+print('Jacobi')
+print(soluzione)
+print('tempo')
+print(tempo)
 
-A=sparse.csr_matrix(np.array([[4,0,0],[0,4,0],[0,0,4]]))
-b=np.array([1,2,3])
-x0=np.random.rand(3)
-print("Jacobi",Jacobi(A,b,x0))
-print("SORForward",SORForward(A,b,x0))
-print("SORBackward",SORBackward(A,b,x0))
-print("SORSymmetric",SORSymmetric(A,b,x0))
+tic = time.time()
+soluzione = SORForward(A, b, x0)
+tempo = time.time() - tic
+print('SORForward')
+print(soluzione)
+print('tempo')
+print(tempo)
 
-print("\n\n",spla.spsolve(A,b))
+tic = time.time()
+soluzione = SORBackward(A, b, x0)
+tempo = time.time() - tic
+print('SORBackward')
+print(soluzione)
+print('tempo')
+print(tempo)
 
-'''
-n=1000
-A = sparse.rand(n, n, density=0.15, format="csr", random_state=42)
-#u0 = sparse.rand(n, 1, density=0.35, format="csr", random_state=42)
-u0=np.random.rand(n)
-t1=time.time()
-lam,u0,n_it,err = Met_PotenzeGoogle(u0,A)
-t2=time.time()
-print('tempo',t2-t1)
-print('autovalore',lam)
-print('iterate',n_it)
-print('errore',err)
+tic = time.time()
+soluzione = SORSymmetric(A, b, x0)
+tempo = time.time() - tic
+print('SORSymmetric')
+print(soluzione)
+print('tempo')
+print(tempo)
 
+tic = time.time()
+soluzione = np.linalg.solve(A, b)
+tempo = time.time() - tic
+print('Solver classico')
+print(soluzione)
+print('tempo')
+print(tempo)
 
-err = [err[i].item() for i in range(1,len(err))]
-plt.semilogy(err)
-plt.show()
+print("MATRICE RANDOMICA A SPARSA GRANDE 100x100 con 90% di zeri")
+A = sparse.random(100, 100, density=0.1, format='csr')
+b = np.random.rand(100)
+x0 = np.random.rand(100)
 
-A = A # + scipy.sparse.identity(n)
-A=A/np.max(A.sum(1),1)
-A.sum(1) #creata matrice di adiacenza. Ha ancora i dead end però'''
+tic = time.time()
+soluzione = spla.spsolve(A, b)
+tempo = time.time() - tic
+print('Solver classico')
+print('tempo')
+print(tempo)
+
+print("STESSA MATRICE A MA PIENA")
+A = A.toarray()
+
+tic = time.time()
+soluzione = np.linalg.solve(A, b)
+tempo = time.time() - tic
+print('Solver classico')
+print('tempo')
+print(tempo)
+
+print("MATRICE RANDOMICA A SPARSA GRANDE 100x100 con 40% di zeri")
+A = sparse.random(100, 100, density=0.6, format='csr')
+b = np.random.rand(100)
+x0 = np.random.rand(100)
+
+tic = time.time()
+soluzione = spla.spsolve(A, b)
+tempo = time.time() - tic
+print('Solver classico')
+print('tempo')
+print(tempo)
+
+print("STESSA MATRICE A MA PIENA")
+A = A.toarray()
+
+tic = time.time()
+soluzione = np.linalg.solve(A, b)
+tempo = time.time() - tic
+print('Solver classico')
+print('tempo')
+print(tempo)
+
+print("METODO DELLE POTENZE PER MATRICE DI GOOGLE SPARSA")
+n = 1000
+A = sparse.random(n, n, density=0.85)
+u0 = np.random.rand(n)
+t1 = time.time()
+lam, u , it, err= Met_PotenzeGoogle(u0, A)
+t2 = time.time() - t1
+print('tempo:', t2)
+print('autovalore:', lam)
+lam, u = spla.eigs(A, k=1)
+print('autovalore:', lam[0])

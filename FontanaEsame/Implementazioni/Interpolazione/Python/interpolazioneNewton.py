@@ -36,13 +36,21 @@ def pol(coef, x):
 
 
 
+x = np.array([1, 2, 3, 4])
+f = np.array([96, 126, 38, 194])
 
-x=np.asarray([1,2,4,5])
-f=np.asarray([1,3,3,4])
-a=interpolazioneDifferenzeDivise(x,f)
-xx=np.linspace(0,5,100)
+a = interpolazioneDifferenzeDivise(x, f)
+
+t = np.arange(1, 4, 0.01)
 polynomial = pol(a, x)
-yy = polynomial(xx)
-plt.plot(xx,yy)
-plt.plot(x,f,'o')
+y = polynomial(t)
+
+plt.plot(t, y, label='Polinomio interpolante')
+plt.scatter(x, f, label='Punti di interpolazione')
+#nel titolo inserisci i valori di a
+plt.title('Interpolazione di Newton\n'+ str(a))
+plt.xlabel('x')
+plt.ylabel('f(x)')
+plt.legend()
+plt.grid(True)
 plt.show()
