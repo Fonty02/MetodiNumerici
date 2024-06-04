@@ -8,4 +8,6 @@
 \contentsline {section}{\numberline {4}Criterio 3: ENTROPIA}{7}{section.4}%
 \contentsline {section}{\numberline {5}Criterio 4: ENERGIA}{9}{section.5}%
 \contentsline {section}{\numberline {6}Criterio 5: K-MEANS ISOLATION FOREST}{11}{section.6}%
-\contentsline {section}{\numberline {7}Conclusioni}{13}{section.7}%
+\contentsline {subsection}{\numberline {6.1}Con logaritmo}{11}{subsection.6.1}%
+\contentsline {subsection}{\numberline {6.2}Senza logaritmo}{12}{subsection.6.2}%
+\contentsline {section}{\numberline {7}Conclusioni}{14}{section.7}%

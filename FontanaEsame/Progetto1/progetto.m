@@ -184,8 +184,8 @@ imshow(Diff_Mat_troncata);
 title('Immagine differenza troncata');
 
 
-%QUINTO CRITERIO DI TRONCAMENTO
-fprintf("SVD TRONCATA -> CRITERIO DI TRONCAMENTO K-MEANS ISOLATION FOREST\n");
+%QUINTO CRITERIO DI TRONCAMENTO con logaritmo
+fprintf("SVD TRONCATA -> CRITERIO DI TRONCAMENTO K-MEANS ISOLATION FOREST (logaritmo)\n");
 tic;
 log_fj = log(fj);
 [idx,C] = kmeans(log_fj, 2);
@@ -229,5 +229,49 @@ subplot(1, num_soglie+2, num_soglie+2);
 imshow(Diff_Mat_troncata);
 title('Immagine differenza troncata');
 
+
+%QUINTO CRITERIO DI TRONCAMENTO senza logaritmo
+fprintf("SVD TRONCATA -> CRITERIO DI TRONCAMENTO K-MEANS ISOLATION FOREST (senza logaritmo)\n");
+tic;
+[idx,C] = kmeans(fj, 2);
+cluster_informazione = find(idx == idx(1));
+[forest,anomaly]=iforest(cluster_informazione);
+if length(unique(anomaly))==1
+    numero_valori_singolari_troncati = length(anomaly);
+else
+    numero_valori_singolari_troncati = find(diff(anomaly)==-1,1);
+    %eseguo le differenze tra elementi successivi. Se trovo -1 significa che ho 1,0 e dunque un salto
+end
+fprintf("Numero di valori singolari troncati=%d\n",numero_valori_singolari_troncati);
+U_troncato=U(:,1:numero_valori_singolari_troncati);
+V_troncato=V(:,1:numero_valori_singolari_troncati);
+S_troncato=S(1:numero_valori_singolari_troncati,1:numero_valori_singolari_troncati);
+Diff_Mat_troncata=U_troncato*S_troncato*V_troncato';
+tempo=toc;
+fprintf("TEMPO IMPIEGATO PER IL TRONCAMENTO=%f\n",tempo);
+[righe,colonne]=size(Diff_Mat_troncata);
+fprintf("ERRORE DI TRONCAMENTO IN NORMA 2 =%f\n",norm(Diff_Mat-Diff_Mat_troncata,2));
+fprintf("ERRORE DI TRONCAMENTO IN NORMA FROBENIUS =%f\n ",norm(Diff_Mat-Diff_Mat_troncata,'fro'));
+fprintf("MINIMO NORMA 2 =%f \n",valori_singolari(numero_valori_singolari_troncati+1));
+fprintf("MINIMO NORMA FROBENIUS =%f\n\n\n",sqrt(sum(valori_singolari(numero_valori_singolari_troncati+1:rank_diff).^2)));
+Diff_Mat_Troncata_vettore=Diff_Mat_troncata(:);
+X_min = min(Diff_Mat_Troncata_vettore);
+X_max = max(Diff_Mat_Troncata_vettore);
+Diff_Mat_Troncata_vettore = (Diff_Mat_Troncata_vettore - X_min) / (X_max - X_min);
+soglie=[0.25,0.5,0.75,graythresh(Diff_Mat_Troncata_vettore)];
+num_soglie = length(soglie);
+figure();
+for i = 1:num_soglie
+    immagine_binaria = reshape(Diff_Mat_Troncata_vettore > soglie(i),righe,colonne);
+    subplot(1, num_soglie+2, i);
+    imshow(immagine_binaria);
+    title(['Soglia ', num2str(soglie(i))]);
+end
+subplot(1, num_soglie+2, num_soglie+1);
+imshow(Diff_Mat);
+title('Immagine differenza');
+subplot(1, num_soglie+2, num_soglie+2);
+imshow(Diff_Mat_troncata);
+title('Immagine differenza troncata');
 
 

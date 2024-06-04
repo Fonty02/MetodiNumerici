@@ -17,7 +17,9 @@ In questo progetto sono stati analizzati diversi criteri per la selezione del nu
     \hline
     Energia & 94 & 442.680374 & 3487.925592 & 0.006s & 301x94 + 94 + 301x94 = 56.682 & 0.25 oppure 0.30196 (automatica) \\
     \hline
-    K-Means Isolation Forest & 225 &  141.942286  & 723.122392 & 0.35s & 301x225 + 225 + 301x225 = 135.675 & 0.25 oppure 0.24706 (automatica) \\
+    K-Means Isolation Forest (log) & 225 &  141.942286  & 723.122392 & 0.35s & 301x225 + 225 + 301x225 = 135.675 & 0.25 oppure 0.24706 (automatica) \\
+    \hline
+    K-Means Isolation Forest & 1 & 1742.857352 &  7454.849653 & 0.0055s & 301x1 + 1 + 301x1 = 603 & / \\
     \hline
     \end{tabular}
 }
@@ -29,7 +31,7 @@ In questo progetto sono stati analizzati diversi criteri per la selezione del nu
 \noindent Il criterio di Guttman-Keiser non si è rilevato utili in questo campo in quanto ha sovrastimato di molto il numero di valori singolari da mantenere, in questo caso specifico 301, che è il numero massimo possibile.\\
 Il criterio di Cottel, essendo basato sullo screenplot e sulla scelta soggettiva del gomito, in questo caso ha sottostimato di molto il numero di valori singolari da mantenere, in questo caso 7.\\
 Gli errori di approssimazione sono molto alti e il tempo di esecuzione è anche maggiore rispetto ad altri criteri che portano a errori minori. In questo caso una soglia più bassa scelta arbitrariamente (e non automaticamente) ha portato ad avere risultati più simili all'immagine originale che a quella troncata.\\
-Il criterio del K-Means isolation forest è il secondo per memoria occupata e primo per tempo di esecuzione impiegato. Sono stati selezionati 225 valori singolari.
+Il criterio del K-Means isolation forest con logaritmo è il secondo per memoria occupata e primo per tempo di esecuzione impiegato. Sono stati selezionati 225 valori singolari. Senza logaritmo risulta un metodo di fatto inutile.
 Due criteri molto simili dal punto di vista di errori, tempo di esecuzione e memoria sono Entropia ed Energia. In particolare quello dell'energia ha richiesto meno tempo, occupato meno memoria al costo di un errore leggermente superiore, rivelandosi di fatto il miglior criterio.
 
 \noindent Possiamo infine notare come in genere soglie molto basse abbiano portato a risultati migliori. In particolare la soglia 0.25 è risultata essere sempre molto simile a quella calcolata automaticamente, il che potrebbe portare vantagggi (si pensi a matrici molto più grandi in cui l'algoritmo di graythresh potrebbe impiegare molto tempo e ottenere risultati molto vicini a 0.25).\\
