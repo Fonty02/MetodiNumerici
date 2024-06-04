@@ -7,17 +7,17 @@ In questo progetto sono stati analizzati diversi criteri per la selezione del nu
     \resizebox{\textwidth}{!}{
     \begin{tabular}{|c|c|c|c|c|c|c|}
     \hline
-     	\textbf{Criterio} & \textbf{Valore di k} & \textbf{Errore relativo \normsymbol} & \textbf{Errore relativo in \frobnormsymbol} & \textbf{Tempo} & \textbf{Memoria utilizzata} & \textbf{Soglia} \\
+     	\textbf{Criterio} & \textbf{Valore di k} & \textbf{Errore assoluto \normsymbol} & \textbf{Errore assoluto in \frobnormsymbol} & \textbf{Tempo} & \textbf{Memoria utilizzata} & \textbf{Soglia} \\
     \hline
     Guttman-Keiser & 301 & 0 & 0 & 0.0018s & 301x301 + 301 +301x301= 181.503 & 0.25 oppure 0.020784 (automatica) \\
     \hline
-    Screenplot di Cottel & 7 & 0.111445 & 0.614371 & 0.07s & 7x301 + 7 + 301x7 = 4.221 & 0.25 simile all'originale, 0.39216 (automatica) simile all'approssimazione \\
+    Screenplot di Cottel & 7 & 907.43406 & 6782.450233 & 0.07s & 7x301 + 7 + 301x7 = 4.221 & 0.25 simile all'originale, 0.39216 (automatica) simile all'approssimazione \\
     \hline
-    Entropia & 116 &  0.047219 & 0.261994 & 0.0009s & 301x116 + 116 + 301x116 = 69.948 & 0.25 oppure 0.26275 (automatica) \\
+    Entropia & 116 &  384.477333 & 2892.327572 & 0.0009s & 301x116 + 116 + 301x116 = 69.948 & 0.25 oppure 0.26275 (automatica) \\
     \hline
-    Energia & 94 & 0.054367 & 0.315945 & 0.006s & 301x94 + 94 + 301x94 = 56.682 & 0.25 oppure 0.30196 (automatica) \\
+    Energia & 94 & 442.680374 & 3487.925592 & 0.006s & 301x94 + 94 + 301x94 = 56.682 & 0.25 oppure 0.30196 (automatica) \\
     \hline
-    K-Means Isolation Forest & 225 &  0.017432 & 0.065502 & 0.35s & 301x225 + 225 + 301x225 = 135.675 & 0.25 oppure 0.24706 (automatica) \\
+    K-Means Isolation Forest & 225 &  141.942286  & 723.122392 & 0.35s & 301x225 + 225 + 301x225 = 135.675 & 0.25 oppure 0.24706 (automatica) \\
     \hline
     \end{tabular}
 }
