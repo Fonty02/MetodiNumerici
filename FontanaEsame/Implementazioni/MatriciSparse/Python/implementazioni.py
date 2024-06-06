@@ -13,10 +13,38 @@ def split(A):
     return D,E,F
 
 
+def cerchioGershgorin(M,N):
+    T=spla.inv(M)@N
+    r,c=T.shape
+    # Calcola il valore assoluto di ogni elemento della matrice
+    T_abs = abs(T)
+    diag_T = T_abs.diagonal()
+    # Somma i valori assoluti lungo le righe
+    somme_righe = T_abs.sum(axis=1)
+    #ad ogni riga sottraggo il valore sulla diagonale
+    raggio_r = somme_righe - diag_T
+    # Trova il massimo valore
+    raggio_r_max = np.max(raggio_r)
+
+    # Calcolo il raggio di Gershgorin per ogni colonna
+    somme_colonne = T_abs.sum(axis=0)
+    #ad ogni colonna sottraggo il valore sulla diagonale
+    raggio_c = somme_colonne - diag_T
+    # Trova il massimo valore
+    raggio_c_max = np.max(raggio_c)
+    # Restituisce intersezione dei due raggi
+    return min(raggio_r_max,raggio_c_max)
+
+
+
+
 def Jacobi(A:sparse._matrix,b,x0,tol=1e-15,max_iter=5000):
     D,E,F=split(A)
     M=D
     N=-(E+F)
+    if (cerchioGershgorin(M,N)>=1):
+        print('Il metodo di Jacobi non converge')
+        return None
     it=0
     stop=False
     while it<max_iter and not stop:
@@ -29,7 +57,7 @@ def Jacobi(A:sparse._matrix,b,x0,tol=1e-15,max_iter=5000):
     if stop:
         return x1
     else:
-        print('Il metodo non converge')
+        print('Il metodo non converge in {} iterazioni'.format(max_iter))
         return None
     
 
@@ -37,6 +65,9 @@ def SORForward(A:sparse._matrix,b,x0,tol=1e-15,max_iter=5000,omega=1.0):
     D,E,F=split(A)
     M=D-omega*E
     N=-(omega*F+(1-omega)*D)
+    if (cerchioGershgorin(M,N)>=1):
+        print('Il metodo di SOR non converge')
+        return None
     b=omega*b
     it=0
     stop=False
@@ -50,7 +81,7 @@ def SORForward(A:sparse._matrix,b,x0,tol=1e-15,max_iter=5000,omega=1.0):
     if stop:
         return x1
     else:
-        print('Il metodo non converge')
+        print('Il metodo non converge in {} iterazioni'.format(max_iter))
         return None
 
 
@@ -58,6 +89,9 @@ def SORBackward(A:sparse._matrix,b,x0,tol=1e-15,max_iter=5000):
     D,E,F=split(A)
     M=D-F
     N=-E
+    if (cerchioGershgorin(M,N)>=1):
+        print('Il metodo di SOR non converge')
+        return None
     it=0
     stop=False
     while it<max_iter and not stop:
@@ -70,7 +104,7 @@ def SORBackward(A:sparse._matrix,b,x0,tol=1e-15,max_iter=5000):
     if stop:
         return x1
     else:
-        print('Il metodo non converge')
+        print('Il metodo non converge in {} iterazioni'.format(max_iter))
         return None
 
 def SORSymmetric(A:sparse._matrix,b,x0,tol=1e-15,max_iter=5000,omega=1.0):
@@ -79,6 +113,9 @@ def SORSymmetric(A:sparse._matrix,b,x0,tol=1e-15,max_iter=5000,omega=1.0):
     NF=-(omega*F+(1-omega)*D)
     MF=D-omega*F
     NE=-(omega*E+(1-omega)*D)
+    if (cerchioGershgorin(ME,NF)>=1 or cerchioGershgorin(MF,NE)>=1):
+        print('Il metodo di SOR non converge')
+        return None
     b=omega*b
     it=0
     stop=False
@@ -93,7 +130,7 @@ def SORSymmetric(A:sparse._matrix,b,x0,tol=1e-15,max_iter=5000,omega=1.0):
     if stop:
         return x1
     else:
-        print('Il metodo non converge')
+        print('Il metodo non converge in {} iterazioni'.format(max_iter))
         return None
 
 

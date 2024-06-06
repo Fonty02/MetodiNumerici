@@ -218,6 +218,45 @@ function [D, E, F] = split(A)
     F = triu(A, 1);
 end
 
+
+
+function r = cerchioGershgorin(M, N)
+    T = inv(M) * N;
+    [r, c] = size(T);
+    
+    % Calcola il valore assoluto di ogni elemento della matrice
+    T_abs = abs(T);
+    
+    % Estrai la diagonale della matrice
+    diag_T = diag(T_abs);
+    
+    % Somma i valori assoluti lungo le righe
+    somme_righe = sum(T_abs, 2);
+    
+    % Sottrai il valore sulla diagonale
+    raggio_r = somme_righe - diag_T;
+    
+    % Trova il massimo valore
+    raggio_r_max = max(raggio_r);
+    
+    % Calcola il raggio di Gershgorin per ogni colonna
+    somme_colonne = sum(T_abs, 1);
+    
+    % Sottrai il valore sulla diagonale
+    raggio_c = somme_colonne' - diag_T;
+    
+    % Trova il massimo valore
+    raggio_c_max = max(raggio_c);
+    
+    % Restituisce intersezione dei due raggi
+    r = min(raggio_r_max, raggio_c_max);
+end
+
+
+
+
+
+
 function x = Jacobi(A, b, x0, tol, max_iter)
     if nargin < 4
         tol = 1e-15;
@@ -228,6 +267,11 @@ function x = Jacobi(A, b, x0, tol, max_iter)
     [D, E, F] = split(A);
     M = D;
     N = -(E + F);
+    if cerchioGershgorin(M, N) >= 1
+        disp('Il metodo di Jacobi non converge');
+        x = [];
+        return;
+    end
     it = 0;
     stop = false;
     while it < max_iter && ~stop
@@ -242,7 +286,7 @@ function x = Jacobi(A, b, x0, tol, max_iter)
     if stop
         x = x1;
     else
-        disp('Il metodo non converge');
+        disp(['Il metodo non converge in ', num2str(max_iter), ' iterazioni']);
         x = [];
     end
 end
@@ -260,6 +304,11 @@ function x = SORForward(A, b, x0, tol, max_iter, omega)
     [D, E, F] = split(A);
     M = D - omega * E;
     N = -(omega * F + (1 - omega) * D);
+    if cerchioGershgorin(M, N) >= 1
+        disp('Il metodo di SOR non converge');
+        x = [];
+        return;
+    end
     b = omega * b;
     it = 0;
     stop = false;
@@ -275,7 +324,7 @@ function x = SORForward(A, b, x0, tol, max_iter, omega)
     if stop
         x = x1;
     else
-        disp('Il metodo non converge');
+        disp(['Il metodo non converge in ', num2str(max_iter), ' iterazioni']);
         x = [];
     end
 end
@@ -290,6 +339,11 @@ function x = SORBackward(A, b, x0, tol, max_iter)
     [D, E, F] = split(A);
     M = D - F;
     N = -E;
+    if cerchioGershgorin(M, N) >= 1
+        disp('Il metodo di SOR non converge');
+        x = [];
+        return;
+    end
     it = 0;
     stop = false;
     while it < max_iter && ~stop
@@ -304,7 +358,7 @@ function x = SORBackward(A, b, x0, tol, max_iter)
     if stop
         x = x1;
     else
-        disp('Il metodo non converge');
+        disp(['Il metodo non converge in ', num2str(max_iter), ' iterazioni']);
         x = [];
     end
 end
@@ -324,6 +378,11 @@ function x = SORSymmetric(A, b, x0, tol, max_iter, omega)
     NF = -(omega * F + (1 - omega) * D);
     MF = D - omega * F;
     NE = -(omega * E + (1 - omega) * D);
+    if cerchioGershgorin(ME, NF) >= 1 || cerchioGershgorin(MF, NE) >= 1
+        disp('Il metodo di SOR non converge');
+        x = [];
+        return;
+    end
     b = omega * b;
     it = 0;
     stop = false;
@@ -340,7 +399,7 @@ function x = SORSymmetric(A, b, x0, tol, max_iter, omega)
     if stop
         x = x1;
     else
-        disp('Il metodo non converge');
+        disp(['Il metodo non converge in ', num2str(max_iter), ' iterazioni']);
         x = [];
     end
 end
