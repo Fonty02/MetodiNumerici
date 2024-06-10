@@ -47,6 +47,16 @@ Per la binarizzazione sono state utilizzate le seguenti soglie:
     \item 0.75
     \item Soglia automatica calcolata con \textbf{graythresh}
 \end{itemize}
+\noindent La funzione \textbf{graythresh} calcola la soglia di binarizzazione utilizzando l'algoritmo di Otsu, il quale minimizza la varianza intra-classe (equivalente a massimizza la varianza inter-classe).\\La varianza intra-classe è definita come:
+\begin{equation}
+    \sigma^2(t) = w_0(t) \cdot \sigma_0^2(t) + w_1(t) \cdot \sigma_1^2(t)
+\end{equation}
+dove:
+\begin{itemize}
+    \item $\sigma^2(t)$ è la varianza totale per la soglia $t$
+    \item $w_0(t)$ e $w_1(t)$ sono le probabilità che le due classi siano separate dalla soglia $t$ e dalla varianza $\sigma_i^2$
+    \item $\sigma_0^2(t)$ e $\sigma_1^2(t)$ sono le varianze delle due classi separate dalla soglia $t$
+\end{itemize}
 
 \begin{figure}[H]
     \centering
